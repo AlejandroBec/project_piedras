@@ -1,0 +1,67 @@
+#este sirve pero no escribe en texto
+import pypyodbc
+
+
+
+palabra = raw_input("Escribe tu palabra: ")
+palabras = palabra.split()
+#print palabra
+print(palabras)
+
+num=0
+
+db=[]
+
+def mostrar():
+	connection = pypyodbc.connect('Driver={SQL Server};'
+                                'Server=localhost;'
+                                'Database=piedras;'
+                                'uid=sa;pwd=123') 
+
+
+	cursor=connection.cursor()
+	cursor.execute("select * from palabras")
+	results=cursor.fetchone()
+	while results:
+
+		db.append(str(results[0]))
+		results = cursor.fetchone()
+#print ("excelente ya te salio")
+	connection.commit()
+
+def main(numero):
+	
+	connection = pypyodbc.connect('Driver={SQL Server};'
+                                'Server=localhost;'
+                                'Database=piedras;'
+                                'uid=sa;pwd=123') 
+
+	mostrar()
+
+	for n in range(len(palabras)) :
+    	
+		if palabras[n] in db:
+			print "La palabra %s"% palabras[n],"ha sido registrada con anterioridad."
+
+
+		else:
+
+			if not(palabras[n].isalpha()): 
+				print "Palabra %s no valida."%palabras[n]
+
+			else:
+				cursor=connection.cursor()
+
+				cursor.executemany("insert into palabras values ('%s')"%palabras[n])
+
+				connection.commit()
+				print "Palabra registrada"
+				print palabras[n]
+
+main(num)
+#print num
+
+
+
+
+	
