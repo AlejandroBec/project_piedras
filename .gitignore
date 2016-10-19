@@ -1,4 +1,7 @@
-#este sirve pero no escribe en texto
+
+#este meor es el bueno
+
+
 import pypyodbc
 
 
@@ -30,7 +33,8 @@ def mostrar():
 	connection.commit()
 
 def main(numero):
-	
+
+
 	connection = pypyodbc.connect('Driver={SQL Server};'
                                 'Server=localhost;'
                                 'Database=piedras;'
@@ -39,7 +43,8 @@ def main(numero):
 	mostrar()
 
 	for n in range(len(palabras)) :
-    	
+   	
+
 		if palabras[n] in db:
 			print "La palabra %s"% palabras[n],"ha sido registrada con anterioridad."
 
@@ -50,6 +55,18 @@ def main(numero):
 				print "Palabra %s no valida."%palabras[n]
 
 			else:
+
+				my_file=open("este_mero.py","w")
+
+				my_file.write(palabra)
+				my_file.close()
+
+				my_file=open("este_mero.py","r")
+				cont=my_file.read()
+	#return cont
+				my_file.close() 
+
+
 				cursor=connection.cursor()
 
 				cursor.executemany("insert into palabras values ('%s')"%palabras[n])
@@ -57,11 +74,12 @@ def main(numero):
 				connection.commit()
 				print "Palabra registrada"
 				print palabras[n]
-
 main(num)
+
 #print num
 
 
 
 
+	
 	
