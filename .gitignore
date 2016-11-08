@@ -1,85 +1,178 @@
 
-#este meor es el bueno
-
-
+from Tkinter import  *
 import pypyodbc
+import tkMessageBox
+import ttk
+import sys
+
+
+ventana=Tk()
+ventana.geometry("300x350+0+0")         
+ventana.title("")
+ventana.config(bg="Skyblue2")
+palabras=[]
+cont=""
+bit = ventana.iconbitmap('p.ico')
+s=ttk.Style()
+s.theme_use('alt')
+#ventana.overrideredirect(True)
+"""ventana.resizable(0,0)
+ventana.attributes("-toolwindow",-1)
+ventana.protocol('WM_DELETE_WINDOW' )"""
 
 
 
-palabra = raw_input("Escribe tu palabra: ")
-palabras = palabra.split()
-#print palabra
-print(palabras)
-
-num=0
-
-db=[]
+def button_exit():
+    sys.exit(0)
 
 def mostrar():
-	connection = pypyodbc.connect('Driver={SQL Server};'
+    connection = pypyodbc.connect('Driver={SQL Server};' 
+                                'Server=localhost;'
+                                'Database=piedras;'
+                                'uid=sa;pwd=123') #conecta
+
+
+    cursor=connection.cursor()
+    cursor.execute("select * from palabras dec")#busca en la tabla
+    results=cursor.fetchone()
+    while results:
+
+        db.append(str(results[0])) #agrega a mi array db
+        results = cursor.fetchone()
+
+
+    connection.commit()
+
+
+
+
+def main():
+
+    palabras = (palabra.get()).split()
+    words = palabra.get()
+    print db
+    print palabras
+    connection = pypyodbc.connect('Driver={SQL Server};'
                                 'Server=localhost;'
                                 'Database=piedras;'
                                 'uid=sa;pwd=123') 
 
+    mostrar()
 
-	cursor=connection.cursor()
-	cursor.execute("select * from palabras")
-	results=cursor.fetchone()
-	while results:
+    for n in range(len(palabras)) :
+    
 
-		db.append(str(results[0]))
-		results = cursor.fetchone()
-#print ("excelente ya te salio")
-	connection.commit()
+        my_file=open("este_mero.py","w")
 
-def main(numero):
+        my_file.write(words)
+        my_file.close()
+        my_file=open("este_mero.py","r")
+        cont=my_file.read()
+        #
+    #return cont
+        my_file.close() 
+        
 
-
-	connection = pypyodbc.connect('Driver={SQL Server};'
-                                'Server=localhost;'
-                                'Database=piedras;'
-                                'uid=sa;pwd=123') 
-
-	mostrar()
-
-	for n in range(len(palabras)) :
-   	
-
-		if palabras[n] in db:
-			print "La palabra %s"% palabras[n],"ha sido registrada con anterioridad."
+        if palabras[n] in db:
+            print "La palabra %s"% palabras[n],"ha sido registrada con anterioridad."
+            tkMessageBox.showinfo("Emergente", "La palabra '%s' ha sido registrada con anterioridad."% palabras[n],)
 
 
-		else:
+        else:
 
-			if not(palabras[n].isalpha()): 
-				print "Palabra %s no valida."%palabras[n]
+            if not(palabras[n].isalpha()): 
+                
 
-			else:
+                if palabras[n]=="exit()":
+                    sys.exit(0)
 
-				my_file=open("este_mero.py","w")
+                print "Palabra %s no valida."%palabras[n]
+                tkMessageBox.showinfo("Emergente", "Palabra '%s' no valida."%palabras[n])
 
-				my_file.write(palabra)
-				my_file.close()
+            else:
+                if palabras[n]=="exit()":
+                    sys.exit(0)
 
-				my_file=open("este_mero.py","r")
-				cont=my_file.read()
-	#return cont
-				my_file.close() 
+                cursor=connection.cursor()
+
+                cursor.executemany("insert into palabras values ('%s')"%palabras[n])
+
+                connection.commit()
+                print "Palabra '%s' registrada"%palabras[n]
+                #winsound.PlaySound("bien.wav", winsound.SND_FILENAME)
+
+                tkMessageBox.showinfo("Emergente", "Palabra '%s' ha sido registrada"%palabras[n])
+
+                db.append(palabras[n])
+                listbox.insert(END, "          "+palabras[n])
+            
+    
+space= Label(ventana, text='')
+space.config(bg="Skyblue2")
+
+my_file=open("este_mero.py","r")
+cont=my_file.read()
+palabra= StringVar()
+word = Entry(ventana, textvariable=palabra,width=30)
+palabra.set(cont)
+s = palabra.get()
+#etiqueta de espacio
+
+space1= Label(ventana, text='')
+space1.config(bg="Skyblue2")
+#boton
+boton = Button(ventana, text='Procesar', command=main,width=16)
+botone = Button(ventana, text='Salir', command=button_exit,width=16)
+#espacio 2
+space2= Label(ventana, text='')
+space2.config(bg="Skyblue2")
+
+space3= Label(ventana, text='')
+space3.config(bg="Skyblue2")
+
+db=[]
+#funcion que examina mi base de datos
 
 
-				cursor=connection.cursor()
 
-				cursor.executemany("insert into palabras values ('%s')"%palabras[n])
-
-				connection.commit()
-				print "Palabra registrada"
-				print palabras[n]
-main(num)
-
-#print num
+#creacion de ventana con tkinter
 
 
+#spnCalif=Spinbox(ventana,values=("Hola","adios")).place(x=100,y=100)
+def center(toplevel):
+    toplevel.update_idletasks()
+    w = toplevel.winfo_screenwidth()
+    h = toplevel.winfo_screenheight()
+    size = tuple(int(_) for _ in toplevel.geometry().split('+')[0].split('x'))
+    x = w/2 - size[0]/2
+    y = h/2 - size[1]/2
+    toplevel.geometry("%dx%d+%d+%d" % (size + (x, y)))
 
 
-	
-	
+
+#creo el listbox
+
+mostrar()
+space.pack()
+listbox = Listbox(ventana)
+word.pack()
+space1.pack()
+boton.pack()
+space2.pack()
+listbox.pack()
+space3.pack()
+botone.pack()
+
+#listbox.grid(row=0, column=0, padx=240, pady=120)
+
+
+#leo mi array db
+for x in range(len(db)):
+	listbox.insert(x, "          "+db[x])
+
+#centr la ventana
+center(ventana)
+
+#ejecuto
+ventana.mainloop()
+
